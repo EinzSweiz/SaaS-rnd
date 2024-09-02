@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>Hello this is my project</h1>
+<h1 class="text-lg font-medium">Hello this is my project</h1>
 <p>{{ request.user }} {{ request.method }}</p>
 {% include 'snippets/welcome_user_msg.html'  %}
 Total Visits: {{ qs }}
