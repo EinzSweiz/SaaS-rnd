@@ -82,6 +82,13 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://saas-rnd-production-1ab9.up.railway.app',
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 ROOT_URLCONF = 'cfehome.urls'
 
 TEMPLATES = [
