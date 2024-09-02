@@ -23,11 +23,14 @@ def register_view(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Everything passed very well!")
-            return redirect('home')
-        else:
-            return redirect('register/')
-    return render(request, 'auth/register.html', {' form':RegistrationForm()})
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=password)
+            messages.success(request, "You Have Successfully Registered! Welcome!")
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+    return render(request, 'auth/register.html', {'form':form})
 
 def logout_view(request):
     logout(request)
