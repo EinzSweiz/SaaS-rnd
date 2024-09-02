@@ -17,6 +17,27 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+#Email Config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', cast=str, default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', cast=str, default='587')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True) # port 587 default
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False) # port 465 default
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', cast=str, default=None)
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', cast=str, default=None)
+
+ADMIN_USER_NAME = config('ADMIN_USER_NAME', cast=str, default= 'Admin User')
+ADMIN_USER_EMAIL = config('ADMIN_USER_EMAIL', cast=str, default= None)
+
+
+ADMINS=[]
+
+MENEGERS=[]
+
+if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
+    ADMINS.append((ADMIN_USER_NAME, ADMIN_USER_EMAIL))
+    MENEGERS = ADMINS
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
