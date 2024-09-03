@@ -26,8 +26,10 @@ def register_view(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
-            messages.success(request, "You Have Successfully Registered! Welcome!")
-            return redirect('login')
+            if user is not None:
+                messages.success(request, "You Have Successfully Registered! Welcome!")
+                login(request, user)
+                return redirect('login')
     else:
         form = RegistrationForm()
     return render(request, 'auth/register.html', {'form':form})
