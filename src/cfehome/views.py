@@ -11,3 +11,7 @@ def home_page_view(request, *args, **kwargs):
     page_visit = PageVisit(path=request.path)
     page_visit.save()
     return render(request, 'index.html', {'title': 'Home Page', 'qs': qs.count(), 'page_qs': page_qs.count()})
+
+
+def pw_protected_view(request, *args, **kwargs):
+    return render(request, 'protected/entry.html', {})
