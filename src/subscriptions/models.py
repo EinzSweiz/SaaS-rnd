@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import Group, Permission
 from django.conf import settings
 from django.db.models.signals import post_save
+import helpers.billing
+
 User = settings.AUTH_USER_MODEL
 ALLOW_CUSTOM_GROUPS = True
 
@@ -20,6 +22,8 @@ class Subscriptions(models.Model):
     limit_choices_to={
         'content_type__app_label': 'subscriptions', 
         'codename__in': [i[0] for i in SUBSCRIPTION_PERMISSIONS]})
+    strip_id = models.CharField(max_length=120, null=True, blank=True)
+
 
     class Meta:
         permissions = SUBSCRIPTION_PERMISSIONS
@@ -27,6 +31,56 @@ class Subscriptions(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+
+class SubscriptionPrice(models.Model):
+    class IntervalChoises(models.TextChoices):
+        MONTHLY = 'month', 'Monthly'
+        YEARLY = 'year', 'Yearly'
+    subscription = models.ForeignKey(Subscriptions, on_delete=models.CASCADE, blank=True)
+    stripe_id = models.CharField(max_length=120, null=True, blank=True)
+    interval = models.CharField(max_length=120,
+                                default=IntervalChoises.MONTHLY,
+                                choices=IntervalChoises.choices
+                            )
+    prices = models.DecimalField(max_digits=10, default=99.99, decimal_places=2)
+
+    @property   
+    def product_stripe_id(self):
+        if not self.subscription:
+            return None
+        return self.subscription.strip_id
+    
+    @property
+    def stripe_price(self):
+        return self.prices * 100
+    
+    @property
+    def stripe_currency(self):
+        return 'usd'
+    
+    def save(self, *args, **kwargs):
+        import stripe
+        stripe.api_key = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"
+
+        strip_id = helpers.billing.create_price(
+        currency=self.stripe_currency,
+        unit_amount=self.stripe_price,
+        interval=self.interval,
+        product=self.product_stripe_id
+        )
+        
+        super.save(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        if not self.strip_id:
+            stripe_id = helpers.billing.create_product( 
+            name=self.name,
+            metadata={'subscription_plan_id': self.id},
+            raw=False),
+            self.strip_id = stripe_id
+                
+        super().save(*args, **kwargs)
 
 
 

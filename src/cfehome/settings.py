@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'commando.apps.CommandoConfig',
     'profiles.apps.ProfilesConfig',
     'subscriptions.apps.SubscriptionsConfig',
+    'customers.apps.CustomersConfig',
     #third-part-apps
     "allauth_ui",
     'allauth',
