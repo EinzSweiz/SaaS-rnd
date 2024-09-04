@@ -16,7 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import home_page_view
+import profiles
+import profiles.urls
+from .views import (
+    home_page_view, 
+    pw_protected_view, 
+    user_only_view, 
+    staff_only_view,
+    )
 from auth import views as auth_views
 
 urlpatterns = [
@@ -26,4 +33,8 @@ urlpatterns = [
     path('logout/', auth_views.logout_view, name='logout'),
     path('register/', auth_views.register_view, name='register'),
     path('accounts/', include('allauth.urls')),
+    path('protected/', pw_protected_view, name='protected'),
+    path('protected/user-only/', user_only_view, name='protected-user-only'),
+    path('protected/staff-only/', staff_only_view, name='protected-staff-only'),
+    path('profiles/', include(profiles.urls))
 ]
